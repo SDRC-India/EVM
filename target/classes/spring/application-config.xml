@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Repository and Service layers -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/data/jpa 
+						http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx.xsd
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/jdbc
+         				http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+         				http://www.springframework.org/schema/jee
+         				http://www.springframework.org/schema/jee/spring-jee.xsd
+         				http://www.springframework.org/schema/mvc
+        				http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        				http://www.springframework.org/schema/beans
+          				http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+          				http://www.springframework.org/schema/security
+          				http://www.springframework.org/schema/security/spring-security-3.2.xsd
+          				http://www.springframework.org/schema/aop
+      					http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+      					http://www.springframework.org/schema/tx
+      					http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+      					http://www.springframework.org/schema/context 
+      					http://www.springframework.org/schema/context/spring-context-3.0.xsd
+      					http://www.springframework.org/schema/jee
+      					http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+      					http://www.springframework.org/schema/aop
+         				http://www.springframework.org/schema/aop/spring-aop.xsd
+         				http://www.springframework.org/schema/cache
+        				http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<context:property-placeholder location="classpath:spring/app.properties"
+		system-properties-mode="OVERRIDE" />
+
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<mvc:annotation-driven />
+
+	<!-- enables scanning for @Transactional annotations -->
+	<tx:annotation-driven />
+
+	<!-- =========================Component Registration ========================= -->
+
+	<context:component-scan base-package="org.sdrc.evm.service" />
+	<context:component-scan base-package="org.sdrc.evm.util" />
+	<context:component-scan base-package="org.sdrc.odkaggregate.gateway" />
+
+	<!-- ========================= End of Component Registration ========================= -->
+
+
+	<!-- ========================= Data Repository Configuration ========================= -->
+
+	<bean
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+	<jpa:repositories base-package="org.sdrc.devinfo.repository.springdatajpa"
+		entity-manager-factory-ref="devinfoEntityManagerFactory"
+		transaction-manager-ref="devinfoTransactionManager" />
+
+	<jpa:repositories base-package="org.sdrc.evm.repository.springdatajpa"
+		entity-manager-factory-ref="entityManagerFactory"
+		transaction-manager-ref="transactionManager" />
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		p:dataSource-ref="dataSource">
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+				p:database="${jpa.database}" p:showSql="${jpa.showSql}" />
+		</property>
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="hibernate.dialect" value="${hibernate.dialect}" />
+				<entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}" />
+				<entry key="hibernate.show_sql" value="${hibernate.show_sql}" />
+			</map>
+		</property>
+
+		<property name="persistenceUnitName" value="evm" />
+		<property name="packagesToScan">
+			<list>
+				<value>org.sdrc.evm.domain</value>
+				<value>org.sdrc.odkaggregate.domain</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="devinfoEntityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		p:dataSource-ref="devinfoDataSource">
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+				p:database="${jpa.database}" p:showSql="${jpa.showSql}" />
+		</property>
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="hibernate.dialect" value="${hibernate.dialect}" />
+				<entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}" />
+				<entry key="hibernate.show_sql" value="${hibernate.show_sql}" />
+			</map>
+		</property>
+		<property name="persistenceUnitName" value="devinfo" />
+		<property name="packagesToScan">
+			<list>
+				<value>org.sdrc.devinfo.domain</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+		p:entityManagerFactory-ref="entityManagerFactory" />
+	<bean id="devinfoTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+		p:entityManagerFactory-ref="devinfoEntityManagerFactory" />
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url"
+			value="${jdbc.url};databaseName=${jdbc.databaseName}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+	<bean id="devinfoDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.devinfo.driverClassName}" />
+		<property name="url"
+			value="${jdbc.devinfo.url};databaseName=${jdbc.devinfo.databaseName}" />
+		<property name="username" value="${jdbc.devinfo.username}" />
+		<property name="password" value="${jdbc.devinfo.password}" />
+	</bean>
+
+	<!-- =========================End of Data Repository Configuration ========================= -->
+
+
+	<!-- ========================= Message RESOURCE DEFINITIONS ========================= -->
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource"
+		p:basename="messages/notification" />
+
+
+	<bean id="workspaceMessageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource"
+		p:basename="messages/workspace" />
+
+	<bean id="aggregationInfoMessageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource"
+		p:basename="messages/aggregation_info" />
+
+	<bean id="applicationMessageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource"
+		p:basename="spring/app" />
+
+	<!-- =========================End of Message RESOURCE DEFINITIONS ========================= -->
+
+
+	<!-- ========================= Start Security-Context configuration ========================= -->
+
+	<security:authentication-manager alias="authenticationManager">
+		<security:authentication-provider
+			ref="clientProvider" />
+	</security:authentication-manager>
+
+	<security:http create-session="always" pattern="/facebook/**"
+		entry-point-ref="facebookEntryPoint">
+		<security:request-cache ref="httpSessionRequestCache" />
+		<security:intercept-url pattern="/facebook/**"
+			access="IS_AUTHENTICATED_FULLY" />
+	</security:http>
+
+	<security:http pattern="/twitter/**" entry-point-ref="twitterEntryPoint">
+		<security:intercept-url pattern="/twitter/**"
+			access="IS_AUTHENTICATED_FULLY" />
+	</security:http>
+
+	<security:http pattern="/login/**" entry-point-ref="googleEntryPoint">
+		<security:intercept-url pattern="/login/**"
+			access="IS_AUTHENTICATED_FULLY" />
+	</security:http>
+
+	<security:http pattern="/form/**" entry-point-ref="formEntryPoint">
+		<security:intercept-url pattern="/form/**"
+			access="IS_AUTHENTICATED_FULLY" />
+	</security:http>
+
+	<security:http pattern="/basicauth/**" entry-point-ref="basicAuthEntryPoint">
+		<security:intercept-url pattern="/basicauth/**"
+			access="IS_AUTHENTICATED_FULLY" />
+	</security:http>
+
+	<security:http pattern="/saml/**" entry-point-ref="samlEntryPoint">
+		<security:intercept-url pattern="/saml/**"
+			access="IS_AUTHENTICATED_FULLY" />
+	</security:http>
+
+	<security:http pattern="/**" entry-point-ref="casEntryPoint">
+		<security:custom-filter after="CAS_FILTER" ref="clientFilter" />
+		<security:intercept-url pattern="/cas/**"
+			access="IS_AUTHENTICATED_FULLY" />
+		<security:intercept-url pattern="/**"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<security:logout logout-success-url="/"
+			invalidate-session="true" delete-cookies="JSESSIONID" />
+	</security:http>
+	<!-- entry points -->
+	<bean id="facebookEntryPoint"
+		class="org.pac4j.springframework.security.web.ClientAuthenticationEntryPoint">
+		<property name="client" ref="facebookClient" />
+	</bean>
+
+	<bean id="googleEntryPoint"
+		class="org.pac4j.springframework.security.web.ClientAuthenticationEntryPoint">
+		<property name="client" ref="googleClient" />
+	</bean>
+
+	<bean id="twitterEntryPoint"
+		class="org.pac4j.springframework.security.web.ClientAuthenticationEntryPoint">
+		<property name="client" ref="twitterClient" />
+	</bean>
+
+	<bean id="formEntryPoint"
+		class="org.pac4j.springframework.security.web.ClientAuthenticationEntryPoint">
+		<property name="client" ref="formClient" />
+	</bean>
+
+	<bean id="basicAuthEntryPoint"
+		class="org.pac4j.springframework.security.web.ClientAuthenticationEntryPoint">
+		<property name="client" ref="basicAuthClient" />
+	</bean>
+
+	<bean id="casEntryPoint"
+		class="org.pac4j.springframework.security.web.ClientAuthenticationEntryPoint">
+		<property name="client" ref="casClient" />
+	</bean>
+
+	<bean id="samlEntryPoint"
+		class="org.pac4j.springframework.security.web.ClientAuthenticationEntryPoint">
+		<property name="client" ref="samlClient" />
+	</bean>
+
+	<!-- clients definition -->
+	<bean id="googleClient" class="org.pac4j.oauth.client.Google2Client">
+		<property name="key" value="${key}" />
+		<property name="secret" value="${secret}" />
+	</bean>
+
+	<bean id="facebookClient" class="org.pac4j.oauth.client.FacebookClient">
+		<property name="key" value="145278422258960" />
+		<property name="secret" value="be21409ba8f39b5dae2a7de525484da8" />
+	</bean>
+
+	<bean id="twitterClient" class="org.pac4j.oauth.client.TwitterClient">
+		<property name="key" value="CoxUiYwQOSFDReZYdjigBA" />
+		<property name="secret" value="2kAzunH5Btc4gRSaMr7D7MkyoJ5u1VzbOOzE8rBofs" />
+	</bean>
+
+	<bean id="usernamePasswordAuthenticator"
+		class="org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator" />
+
+	<bean id="formClient" class="org.pac4j.http.client.FormClient">
+		<property name="loginUrl" value="http://localhost:8080/theForm.jsp" />
+		<property name="usernamePasswordAuthenticator" ref="usernamePasswordAuthenticator" />
+	</bean>
+
+	<bean id="basicAuthClient" class="org.pac4j.http.client.BasicAuthClient">
+		<property name="usernamePasswordAuthenticator" ref="usernamePasswordAuthenticator" />
+	</bean>
+
+	<bean id="samlClient" class="org.pac4j.saml.client.Saml2Client">
+		<property name="keystorePath" value="resource:samlKeystore.jks" />
+		<property name="keystorePassword" value="pac4j-demo-passwd" />
+		<property name="privateKeyPassword" value="pac4j-demo-passwd" />
+		<property name="idpMetadataPath" value="resource:testshib-providers.xml" />
+	</bean>
+
+	<bean id="casClient" class="org.pac4j.cas.client.CasClient">
+		<property name="casLoginUrl"
+			value="https://freeuse1.casinthecloud.com/leleujgithub/login" />
+	</bean>
+
+	<bean id="clients" class="org.pac4j.core.client.Clients">
+		<property name="callbackUrl" value="${callbackUrl}" />
+		<property name="clients">
+			<list>
+				<ref bean="facebookClient" />
+				<ref bean="twitterClient" />
+				<ref bean="googleClient" />
+				<ref bean="formClient" />
+				<ref bean="basicAuthClient" />
+				<ref bean="casClient" />
+				<ref bean="samlClient" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- common to all clients -->
+	<bean id="clientFilter"
+		class="org.pac4j.springframework.security.web.ClientAuthenticationFilter">
+		<constructor-arg value="/j_spring_oauth_security_check" />
+		<property name="clients" ref="clients" />
+		<property name="sessionAuthenticationStrategy" ref="sas" />
+		<property name="authenticationManager" ref="authenticationManager" />
+	</bean>
+
+	<bean id="clientProvider"
+		class="org.pac4j.springframework.security.authentication.ClientAuthenticationProvider">
+		<property name="clients" ref="clients" />
+	</bean>
+
+	<bean id="httpSessionRequestCache"
+		class="org.springframework.security.web.savedrequest.HttpSessionRequestCache" />
+
+	<bean id="sas"
+		class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy" />
+
+	<!-- ========================= End Security-Context configuration ========================= -->
+
+
+
+
+	<!-- ========================= Start Tools-Config configuration ========================= -->
+	<aop:aspectj-autoproxy>
+		<aop:include name="callMonitor" />
+	</aop:aspectj-autoproxy>
+
+
+	<context:mbean-export />
+
+	<!-- enables scanning for @Cacheable annotation -->
+	<cache:annotation-driven />
+
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="ehcache" />
+	</bean>
+
+	<bean id="ehcache"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:cache/ehcache.xml" />
+	</bean>
+
+</beans>
