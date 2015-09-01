@@ -1,0 +1,1 @@
+<iframe src="${editURL}" onload="removeSubmitButton()" width="940px" height="100%" id="enketo_frame"></iframe>
