@@ -21,15 +21,15 @@
 					<p class="mar-top-10 mar-bot-10">It is based on nine basic
 						indicators listed below:</p>
 					<ol class="list-unstyled">
-						<li>1. Vaccine arrival procedures</li>
-						<li>2. Vaccine storage temperatures</li>
-						<li>3. Cold storage capacity</li>
-						<li>4. Buildings, cold chain equipment and transport</li>
-						<li>5. Maintenance of cold chain equipment and transport</li>
-						<li>6. Stock management</li>
-						<li>7. Effective vaccine delivery</li>
-						<li>8. Vaccine Management practices</li>
-						<li>9. SOPs and Supportive Management Systems</li>
+						<li>Vaccine arrival procedures</li>
+						<li>Vaccine storage temperatures</li>
+						<li>Cold storage capacity</li>
+						<li>Buildings, cold chain equipment and transport</li>
+						<li>Maintenance of cold chain equipment and transport</li>
+						<li>Stock management</li>
+						<li>Effective vaccine delivery</li>
+						<li>Vaccine Management practices</li>
+						<li>SOPs and Supportive Management Systems</li>
 					</ol>
 					<p>It consists of a series of focused questions, which are
 						numerically scored based on the observed practices and records of
