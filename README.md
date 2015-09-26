@@ -44,4 +44,29 @@
 					<p>Based on facts collected from the field and recommendations
 						developed by assessment team members, improvements plans are
 						prepared, to address gaps in the system.</p>
+	<h4>TECHNICAL SETUP GUIDE:</h4>
+	
+	<p>The EVM system enables data collection using android devices using the WHO-UNICEF designed Global Effective Vaccine Management (EVM) tool. Data is pushed to a central repository and passed through an aggregation engine to generate key statistics.
+	</p>
+	
+	<p>The key indicators are displayed on a dashboard that presents the geo referenced health facilities which are color coded based on their performance. The dashboard was developed using a combination of technologies like Angular.js as the web MVC framework, Bootstrap and Jquery for the user interface developments, Java Spring framework for the service layer and google’s oauth authentication and D3 for the charts components. A customized DI7 web adaptation was used to enable custom query, analysis, and visualization.
+	</p>
+	
+	<h5>Database Setup :
+	</h5>
+	<p>EVM uses two sets of MSSQL based databases, evm_devinfo for the DevInfo 7 based customised adaptation and evm_web for the dashboard components.
+	</p>
+	
+	<p>Step1: MSSQL Server should be installed before moving to the next steps.</p>
+	<p>Step2: Create two empty databases evm_devinfo and evm_web.</p>
+	<p>Step3: Update the properties hibernate.hbm2ddl.auto from none to update  in the app.properties file (resources/spring 		folder), this will ensure that the required tables are created by Spring Data JPA in the corresponding databases 			when the application executes.</p>
+	<p>Step4: Update the jdbc.url, jdbc.username, jdbc.password, jdbc.devinfo.url, jdbc.devinfo.username jdbc.devinfo.password 	properties for evm_web and evm_devinfo databases respectively, in the app.properties file (resources/spring folder), based on the development machine properties.</p>
+	
+	
+	<h5>ODK Aggregate Server Setup :</h5>
+	<p>The ODK server can be setup by following the link mentioned below.<br> https://opendatakit.org/use/aggregate/</p>
+	<p>Once the aggregate server is ready, update the odk.aggregate.server, odk.aggregate.username, odk.aggregate.password in 	the app.properties file.</p>
+
+
+	
 				</div>
