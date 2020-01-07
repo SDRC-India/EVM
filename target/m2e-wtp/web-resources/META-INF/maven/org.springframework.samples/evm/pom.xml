@@ -103,7 +103,7 @@
 		<mysql.version>5.1.22</mysql.version>
 
 		<!-- Added for pac4j-spring-oauth -->
-		<pac4jVersion>1.5.1</pac4jVersion>
+		<pac4jVersion>3.8.3</pac4jVersion>
 
 		<!-- Apache POI -->
 		<poi.version>3.10-FINAL</poi.version>
